@@ -35,7 +35,7 @@ Kirigami.ApplicationWindow {
     }
 
     pageStack.initialPage: Kirigami.ScrollablePage {
-        title: qsTr("Diary - %1").arg(diaryStore.currentDate)
+        title: qsTr("Diary: %1").arg(diaryStore.currentDate)
 
         Column {
             width: parent.width
@@ -92,6 +92,23 @@ Kirigami.ApplicationWindow {
                         onTextChanged: if (activeFocus) diaryStore.entryText = text
                         wrapMode: Controls.TextArea.Wrap
                     }
+
+                    Controls.Label {
+                        visible: diaryStore.hardBreakCount > 0
+                        width: parent.width
+                        text: qsTr("%1 Markdown hard break(s): trailing spaces before a newline are active.")
+                            .arg(diaryStore.hardBreakCount)
+                        color: Kirigami.Theme.neutralTextColor
+                        wrapMode: Controls.Label.Wrap
+                    }
+
+                    Controls.Label {
+                        visible: diaryStore.hardBreakCount > 0
+                        width: parent.width
+                        text: qsTr("Whitespace guide: %1").arg(diaryStore.hardBreakGuide)
+                        font.family: "monospace"
+                        opacity: 0.75
+                    }
                 }
 
                 Column {
@@ -127,7 +144,7 @@ Kirigami.ApplicationWindow {
 
             Controls.Label {
                 text: diaryStore.rated
-                    ? qsTr("Eudaimonia rating (optional): %1 / 10").arg(diaryStore.rating.toFixed(2))
+                    ? qsTr("Eudaimonia rating (optional): %1 / 10").arg(diaryStore.ratingText)
                     : qsTr("Eudaimonia rating (optional): Not rated")
                 opacity: 0.8
             }

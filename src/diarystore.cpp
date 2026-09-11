@@ -34,6 +34,40 @@ QString DiaryStore::entryText() const
     return m_entryText;
 }
 
+int DiaryStore::hardBreakCount() const
+{
+    int count = 0;
+    const QStringList lines = m_entryText.split(QLatin1Char('\n'));
+    for (const QString &line : lines) {
+        int trailingSpaces = 0;
+        for (qsizetype index = line.size() - 1; index >= 0
+             && line.at(index) == QLatin1Char(' '); --index) {
+            ++trailingSpaces;
+        }
+        if (trailingSpaces >= 2) {
+            ++count;
+        }
+    }
+    return count;
+}
+
+QString DiaryStore::hardBreakGuide() const
+{
+    QStringList markers;
+    const QStringList lines = m_entryText.split(QLatin1Char('\n'));
+    for (const QString &line : lines) {
+        int trailingSpaces = 0;
+        for (qsizetype index = line.size() - 1; index >= 0
+             && line.at(index) == QLatin1Char(' '); --index) {
+            ++trailingSpaces;
+        }
+        if (trailingSpaces >= 2) {
+            markers.append(QStringLiteral("·").repeated(trailingSpaces) + QStringLiteral(" ↵"));
+        }
+    }
+    return markers.join(QStringLiteral("   "));
+}
+
 double DiaryStore::rating() const
 {
     return m_rating;
@@ -41,7 +75,17 @@ double DiaryStore::rating() const
 
 QString DiaryStore::ratingText() const
 {
-    return m_rated ? QString::number(m_rating, 'f', 2) : QString();
+    if (!m_rated) {
+        return {};
+    }
+    QString value = QString::number(m_rating, 'f', 2);
+    while (value.endsWith(QLatin1Char('0'))) {
+        value.chop(1);
+    }
+    if (value.endsWith(QLatin1Char('.'))) {
+        value.chop(1);
+    }
+    return value;
 }
 
 bool DiaryStore::rated() const
