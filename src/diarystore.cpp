@@ -39,6 +39,11 @@ double DiaryStore::rating() const
     return m_rating;
 }
 
+QString DiaryStore::ratingText() const
+{
+    return m_rated ? QString::number(m_rating, 'f', 2) : QString();
+}
+
 bool DiaryStore::rated() const
 {
     return m_rated;
@@ -160,6 +165,24 @@ void DiaryStore::clearRating()
     m_rated = false;
     emit ratingChanged();
     emit ratedChanged();
+}
+
+bool DiaryStore::setRatingText(const QString &text)
+{
+    const QString trimmed = text.trimmed();
+    if (trimmed.isEmpty()) {
+        clearRating();
+        return true;
+    }
+
+    bool valid = false;
+    const double parsedRating = trimmed.toDouble(&valid);
+    if (!valid || parsedRating < 0.0 || parsedRating > 10.0
+        || (trimmed.contains('.') && trimmed.section('.', 1).size() > 2)) {
+        return false;
+    }
+    setRating(parsedRating);
+    return true;
 }
 
 bool DiaryStore::openDatabase()

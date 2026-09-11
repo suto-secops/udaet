@@ -9,6 +9,7 @@ class DiaryStore final : public QObject
     Q_PROPERTY(QString currentDate READ currentDate NOTIFY currentDateChanged)
     Q_PROPERTY(QString entryText READ entryText WRITE setEntryText NOTIFY entryTextChanged)
     Q_PROPERTY(double rating READ rating WRITE setRating NOTIFY ratingChanged)
+    Q_PROPERTY(QString ratingText READ ratingText NOTIFY ratingChanged)
     Q_PROPERTY(bool rated READ rated NOTIFY ratedChanged)
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
 
@@ -18,6 +19,7 @@ public:
     QString currentDate() const;
     QString entryText() const;
     double rating() const;
+    QString ratingText() const;
     bool rated() const;
     QString errorMessage() const;
 
@@ -28,6 +30,7 @@ public:
     Q_INVOKABLE bool loadDay(const QString &date);
     Q_INVOKABLE void loadToday();
     Q_INVOKABLE void clearRating();
+    Q_INVOKABLE bool setRatingText(const QString &text);
 
 signals:
     void currentDateChanged();

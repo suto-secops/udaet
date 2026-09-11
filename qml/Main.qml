@@ -10,21 +10,32 @@ Kirigami.ApplicationWindow {
     height: 700
     visible: true
 
-    pageStack.initialPage: Kirigami.ScrollablePage {
-        title: qsTr("Diary - %1").arg(diaryStore.currentDate)
+    globalDrawer: Kirigami.GlobalDrawer {
+        title: qsTr("Udaet")
+        titleIcon: "journal"
+        modal: false
 
         actions: [
             Kirigami.Action {
-                text: qsTr("Today")
-                icon.name: "go-today"
+                text: qsTr("Diary")
+                icon.name: "journal"
                 onTriggered: diaryStore.loadToday()
             },
             Kirigami.Action {
-                text: qsTr("Save")
-                icon.name: "document-save"
-                onTriggered: diaryStore.saveCurrentDay()
+                text: qsTr("Calendar")
+                icon.name: "view-calendar"
+                enabled: false
+            },
+            Kirigami.Action {
+                text: qsTr("Trends")
+                icon.name: "office-chart-line"
+                enabled: false
             }
         ]
+    }
+
+    pageStack.initialPage: Kirigami.ScrollablePage {
+        title: qsTr("Diary - %1").arg(diaryStore.currentDate)
 
         Column {
             width: parent.width
@@ -77,13 +88,23 @@ Kirigami.ApplicationWindow {
                     width: (parent.width - parent.spacing) / 2
                     height: entryEditor.implicitHeight
 
-                    Controls.Label {
+                    Column {
                         width: parent.width
-                        text: diaryStore.entryText.length > 0
-                            ? diaryStore.entryText
-                            : qsTr("Rendered preview will appear here.")
-                        textFormat: Text.MarkdownText
-                        wrapMode: Controls.Label.Wrap
+                        spacing: Kirigami.Units.smallSpacing
+
+                        Controls.Label {
+                            text: qsTr("Preview")
+                            font.bold: true
+                        }
+
+                        Controls.Label {
+                            width: parent.width
+                            text: diaryStore.entryText.length > 0
+                                ? diaryStore.entryText
+                                : qsTr("Rendered preview will appear here.")
+                            textFormat: Text.MarkdownText
+                            wrapMode: Controls.Label.Wrap
+                        }
                     }
                 }
             }
@@ -97,14 +118,36 @@ Kirigami.ApplicationWindow {
                 opacity: 0.8
             }
 
-            Controls.Slider {
-                id: ratingSlider
+            Row {
                 width: parent.width
-                from: 0
-                to: 10
-                stepSize: 0.01
-                value: diaryStore.rated ? diaryStore.rating : 0
-                onMoved: diaryStore.rating = value
+                spacing: Kirigami.Units.largeSpacing
+
+                Controls.Slider {
+                    id: ratingSlider
+                    width: parent.width - ratingField.width - parent.spacing
+                    from: 0
+                    to: 10
+                    stepSize: 0.01
+                    value: diaryStore.rated ? diaryStore.rating : 0
+                    onMoved: diaryStore.rating = value
+                }
+
+                Controls.TextField {
+                    id: ratingField
+                    width: Kirigami.Units.gridUnit * 6
+                    text: diaryStore.ratingText
+                    placeholderText: qsTr("0.00 - 10.00")
+                    validator: DoubleValidator {
+                        bottom: 0
+                        top: 10
+                        decimals: 2
+                    }
+                    onEditingFinished: {
+                        if (!diaryStore.setRatingText(text)) {
+                            text = diaryStore.ratingText
+                        }
+                    }
+                }
             }
 
             Controls.Label {
@@ -113,10 +156,20 @@ Kirigami.ApplicationWindow {
                     : qsTr("Not rated")
             }
 
-            Controls.Button {
-                text: qsTr("Clear rating")
-                enabled: diaryStore.rated
-                onClicked: diaryStore.clearRating()
+            Row {
+                spacing: Kirigami.Units.smallSpacing
+
+                Controls.Button {
+                    text: qsTr("Save")
+                    icon.name: "document-save"
+                    onClicked: diaryStore.saveCurrentDay()
+                }
+
+                Controls.Button {
+                    text: qsTr("Clear rating")
+                    enabled: diaryStore.rated
+                    onClicked: diaryStore.clearRating()
+                }
             }
 
             Controls.Label {
