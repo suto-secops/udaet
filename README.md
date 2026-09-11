@@ -3,6 +3,8 @@
 Udaet is a local-first diary for KDE Plasma, focused on daily writing,
 eudaimonia ratings, image galleries, and long-term trends.
 
+Udaet is distributed under the [PolyForm Noncommercial License 1.0.0](LICENSE).
+
 ## Current status
 
 The repository contains the first functional Qt 6/Kirigami vertical slice:

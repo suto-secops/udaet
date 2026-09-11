@@ -74,31 +74,43 @@ Kirigami.ApplicationWindow {
                 width: parent.width
                 spacing: Kirigami.Units.largeSpacing
 
-                Controls.TextArea {
-                    id: entryEditor
+                Column {
                     width: (parent.width - parent.spacing) / 2
-                    implicitHeight: Kirigami.Units.gridUnit * 12
-                    placeholderText: qsTr("Write Markdown about your day...")
-                    text: diaryStore.entryText
-                    onTextChanged: if (activeFocus) diaryStore.entryText = text
-                    wrapMode: Controls.TextArea.Wrap
+                    spacing: Kirigami.Units.smallSpacing
+
+                    Controls.Label {
+                        text: qsTr("Source")
+                        font.bold: true
+                    }
+
+                    Controls.TextArea {
+                        id: entryEditor
+                        width: parent.width
+                        implicitHeight: Kirigami.Units.gridUnit * 12
+                        placeholderText: qsTr("Write Markdown about your day...")
+                        text: diaryStore.entryText
+                        onTextChanged: if (activeFocus) diaryStore.entryText = text
+                        wrapMode: Controls.TextArea.Wrap
+                    }
                 }
 
-                Controls.ScrollView {
+                Column {
                     width: (parent.width - parent.spacing) / 2
-                    height: entryEditor.implicitHeight
+                    spacing: Kirigami.Units.smallSpacing
 
-                    Column {
+                    Controls.Label {
+                        text: qsTr("Preview")
+                        font.bold: true
+                    }
+
+                    Controls.ScrollView {
+                        id: previewScroll
                         width: parent.width
-                        spacing: Kirigami.Units.smallSpacing
+                        height: entryEditor.implicitHeight
+                        contentWidth: availableWidth
 
                         Controls.Label {
-                            text: qsTr("Preview")
-                            font.bold: true
-                        }
-
-                        Controls.Label {
-                            width: parent.width
+                            width: previewScroll.availableWidth
                             text: diaryStore.entryText.length > 0
                                 ? diaryStore.entryText
                                 : qsTr("Rendered preview will appear here.")
@@ -114,23 +126,15 @@ Kirigami.ApplicationWindow {
             }
 
             Controls.Label {
-                text: qsTr("Eudaimonia rating (optional)")
+                text: diaryStore.rated
+                    ? qsTr("Eudaimonia rating (optional): %1 / 10").arg(diaryStore.rating.toFixed(2))
+                    : qsTr("Eudaimonia rating (optional): Not rated")
                 opacity: 0.8
             }
 
             Row {
                 width: parent.width
                 spacing: Kirigami.Units.largeSpacing
-
-                Controls.Slider {
-                    id: ratingSlider
-                    width: parent.width - ratingField.width - parent.spacing
-                    from: 0
-                    to: 10
-                    stepSize: 0.01
-                    value: diaryStore.rated ? diaryStore.rating : 0
-                    onMoved: diaryStore.rating = value
-                }
 
                 Controls.TextField {
                     id: ratingField
@@ -148,12 +152,23 @@ Kirigami.ApplicationWindow {
                         }
                     }
                 }
-            }
 
-            Controls.Label {
-                text: diaryStore.rated
-                    ? qsTr("%1 / 10").arg(diaryStore.rating.toFixed(2))
-                    : qsTr("Not rated")
+                Controls.Slider {
+                    id: ratingSlider
+                    width: parent.width - ratingField.width - clearRatingButton.width - (parent.spacing * 2)
+                    from: 0
+                    to: 10
+                    stepSize: 0.01
+                    value: diaryStore.rated ? diaryStore.rating : 0
+                    onMoved: diaryStore.rating = value
+                }
+
+                Controls.Button {
+                    id: clearRatingButton
+                    text: qsTr("Clear")
+                    enabled: diaryStore.rated
+                    onClicked: diaryStore.clearRating()
+                }
             }
 
             Row {
@@ -163,12 +178,6 @@ Kirigami.ApplicationWindow {
                     text: qsTr("Save")
                     icon.name: "document-save"
                     onClicked: diaryStore.saveCurrentDay()
-                }
-
-                Controls.Button {
-                    text: qsTr("Clear rating")
-                    enabled: diaryStore.rated
-                    onClicked: diaryStore.clearRating()
                 }
             }
 
