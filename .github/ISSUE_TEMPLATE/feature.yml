@@ -1,0 +1,25 @@
+name: Feature
+description: Propose a user-facing diary capability
+title: "[Feature]: "
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: User problem
+      description: What problem should Udaet solve?
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Expected behavior
+      description: Describe the smallest useful behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+      description: List observable conditions that prove this is complete.
+    validations:
+      required: true
