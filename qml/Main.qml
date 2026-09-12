@@ -30,9 +30,6 @@ Kirigami.ApplicationWindow {
         titleIcon: null
         modal: false
         interactiveResizeEnabled: true
-        minimumSize: Kirigami.Units.gridUnit * 12
-        preferredSize: Kirigami.Units.gridUnit * 18
-        maximumSize: Kirigami.Units.gridUnit * 28
 
         topContent: [
             Column {
