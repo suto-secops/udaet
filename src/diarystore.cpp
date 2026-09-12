@@ -229,6 +229,28 @@ bool DiaryStore::setRatingText(const QString &text)
     return true;
 }
 
+QVariantList DiaryStore::daysWithContent(int year, int month) const
+{
+    QVariantList days;
+    const QDate monthStart(year, month, 1);
+    if (!monthStart.isValid()) {
+        return days;
+    }
+
+    QSqlQuery query(QSqlDatabase::database(m_connectionName));
+    query.prepare(QStringLiteral(
+        "SELECT day FROM days WHERE day >= :start AND day < :end ORDER BY day"));
+    query.bindValue(QStringLiteral(":start"), monthStart.toString(Qt::ISODate));
+    query.bindValue(QStringLiteral(":end"), monthStart.addMonths(1).toString(Qt::ISODate));
+    if (!query.exec()) {
+        return days;
+    }
+    while (query.next()) {
+        days.append(query.value(0).toString());
+    }
+    return days;
+}
+
 bool DiaryStore::openDatabase()
 {
     const QString dataDirectory =

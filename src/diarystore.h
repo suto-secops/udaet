@@ -2,6 +2,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QVariantList>
 
 class DiaryStore final : public QObject
 {
@@ -35,6 +36,7 @@ public:
     Q_INVOKABLE void loadToday();
     Q_INVOKABLE void clearRating();
     Q_INVOKABLE bool setRatingText(const QString &text);
+    Q_INVOKABLE QVariantList daysWithContent(int year, int month) const;
 
 signals:
     void currentDateChanged();
