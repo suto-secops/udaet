@@ -34,3 +34,12 @@ cmake --build build
 The exact package names depend on the Arch/KDE packaging state. Runtime data
 will be stored under the standard Qt application data location; imported
 images are copied there rather than referenced in place.
+
+## Sample data
+
+To populate a local database with representative entries across recent days,
+months, and older history without overwriting existing days:
+
+```sh
+python3 scripts/seed_sample_data.py
+```
