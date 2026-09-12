@@ -205,6 +205,7 @@ Kirigami.ApplicationWindow {
                             width: parent.width
                             height: entryEditor.implicitHeight
                             color: "transparent"
+                            border.width: 1
                             border.color: Kirigami.Theme.separatorColor
                             radius: Kirigami.Units.smallSpacing
 
