@@ -300,6 +300,19 @@ Kirigami.ApplicationWindow {
                     .arg(("0" + shownMonth).slice(-2))
                     .arg(("0" + day).slice(-2))) >= 0
             }
+            function isPastDay(day) {
+                const today = new Date()
+                const date = new Date(shownYear, shownMonth - 1, day)
+                return shownYear === today.getFullYear()
+                    && shownMonth === today.getMonth() + 1
+                    && date < new Date(today.getFullYear(), today.getMonth(), today.getDate())
+            }
+            function isCurrentDay(day) {
+                const today = new Date()
+                return shownYear === today.getFullYear()
+                    && shownMonth === today.getMonth() + 1
+                    && day === today.getDate()
+            }
             function monthName() {
                 return new Date(shownYear, shownMonth - 1, 1).toLocaleString(
                     Qt.locale(), "MMMM yyyy")
@@ -353,6 +366,7 @@ Kirigami.ApplicationWindow {
                     Repeater {
                         model: 42
                         delegate: Controls.Button {
+                            id: dayButton
                             required property int index
                             property int firstWeekday: new Date(calendar.shownYear, calendar.shownMonth - 1, 1).getDay()
                             property int dayNumber: index - firstWeekday + 1
@@ -360,6 +374,20 @@ Kirigami.ApplicationWindow {
                             width: (monthGrid.width - monthGrid.spacing * 6) / 7
                             text: visible ? dayNumber : ""
                             highlighted: visible && calendar.isFilled(dayNumber)
+                            background: Rectangle {
+                                radius: Kirigami.Units.smallSpacing
+                                color: diaryStore.highlightCurrentDay && calendar.isCurrentDay(dayNumber)
+                                    ? Kirigami.Theme.highlightColor : "transparent"
+                            }
+                            contentItem: Controls.Label {
+                                text: dayButton.text
+                                color: dayButton.highlighted
+                                    ? Kirigami.Theme.highlightedTextColor
+                                    : Kirigami.Theme.textColor
+                                opacity: diaryStore.crossOutPastDays && calendar.isPastDay(dayNumber)
+                                    ? 0.65 : 1
+                                font.strikeout: diaryStore.crossOutPastDays && calendar.isPastDay(dayNumber)
+                            }
                             onClicked: root.showDiary("%1-%2-%3".arg(calendar.shownYear)
                                 .arg(("0" + calendar.shownMonth).slice(-2))
                                 .arg(("0" + dayNumber).slice(-2)))
@@ -433,6 +461,18 @@ Kirigami.ApplicationWindow {
                 Controls.Label {
                     text: qsTr("Example: %1").arg(diaryStore.currentDate)
                     opacity: 0.8
+                }
+
+                Controls.CheckBox {
+                    text: qsTr("Cross out past days in the current month")
+                    checked: diaryStore.crossOutPastDays
+                    onToggled: diaryStore.crossOutPastDays = checked
+                }
+
+                Controls.CheckBox {
+                    text: qsTr("Highlight the current day")
+                    checked: diaryStore.highlightCurrentDay
+                    onToggled: diaryStore.highlightCurrentDay = checked
                 }
             }
         }

@@ -18,6 +18,8 @@ class DiaryStore final : public QObject
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
     Q_PROPERTY(QString dateOrder READ dateOrder WRITE setDateOrder NOTIFY dateFormatChanged)
     Q_PROPERTY(QString dateSeparator READ dateSeparator WRITE setDateSeparator NOTIFY dateFormatChanged)
+    Q_PROPERTY(bool crossOutPastDays READ crossOutPastDays WRITE setCrossOutPastDays NOTIFY calendarPreferencesChanged)
+    Q_PROPERTY(bool highlightCurrentDay READ highlightCurrentDay WRITE setHighlightCurrentDay NOTIFY calendarPreferencesChanged)
 
 public:
     explicit DiaryStore(QObject *parent = nullptr);
@@ -32,11 +34,15 @@ public:
     QString errorMessage() const;
     QString dateOrder() const;
     QString dateSeparator() const;
+    bool crossOutPastDays() const;
+    bool highlightCurrentDay() const;
 
     void setEntryText(const QString &text);
     void setRating(double rating);
     void setDateOrder(const QString &order);
     void setDateSeparator(const QString &separator);
+    void setCrossOutPastDays(bool enabled);
+    void setHighlightCurrentDay(bool enabled);
 
     Q_INVOKABLE bool saveCurrentDay();
     Q_INVOKABLE bool loadDay(const QString &date);
@@ -52,6 +58,7 @@ signals:
     void ratedChanged();
     void errorMessageChanged();
     void dateFormatChanged();
+    void calendarPreferencesChanged();
 
 private:
     bool openDatabase();
@@ -67,6 +74,8 @@ private:
     QString m_connectionName;
     QString m_dateOrder = QStringLiteral("yyyy MM dd");
     QString m_dateSeparator = QStringLiteral("-");
+    bool m_crossOutPastDays = false;
+    bool m_highlightCurrentDay = false;
 
     QString formatDate(const QString &isoDate) const;
     QDate parseDate(const QString &date) const;

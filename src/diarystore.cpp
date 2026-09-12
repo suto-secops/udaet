@@ -22,6 +22,8 @@ DiaryStore::DiaryStore(QObject *parent)
     QSettings settings;
     m_dateOrder = settings.value(QStringLiteral("dateOrder"), m_dateOrder).toString();
     m_dateSeparator = settings.value(QStringLiteral("dateSeparator"), m_dateSeparator).toString();
+    m_crossOutPastDays = settings.value(QStringLiteral("crossOutPastDays"), m_crossOutPastDays).toBool();
+    m_highlightCurrentDay = settings.value(QStringLiteral("highlightCurrentDay"), m_highlightCurrentDay).toBool();
     m_currentDate = QDate::currentDate().toString(Qt::ISODate);
     if (openDatabase() && migrate()) {
         loadToday();
@@ -41,6 +43,16 @@ QString DiaryStore::dateOrder() const
 QString DiaryStore::dateSeparator() const
 {
     return m_dateSeparator;
+}
+
+bool DiaryStore::crossOutPastDays() const
+{
+    return m_crossOutPastDays;
+}
+
+bool DiaryStore::highlightCurrentDay() const
+{
+    return m_highlightCurrentDay;
 }
 
 QString DiaryStore::entryText() const
@@ -163,6 +175,26 @@ void DiaryStore::setDateSeparator(const QString &separator)
     QSettings().setValue(QStringLiteral("dateSeparator"), m_dateSeparator);
     emit dateFormatChanged();
     emit currentDateChanged();
+}
+
+void DiaryStore::setCrossOutPastDays(bool enabled)
+{
+    if (m_crossOutPastDays == enabled) {
+        return;
+    }
+    m_crossOutPastDays = enabled;
+    QSettings().setValue(QStringLiteral("crossOutPastDays"), enabled);
+    emit calendarPreferencesChanged();
+}
+
+void DiaryStore::setHighlightCurrentDay(bool enabled)
+{
+    if (m_highlightCurrentDay == enabled) {
+        return;
+    }
+    m_highlightCurrentDay = enabled;
+    QSettings().setValue(QStringLiteral("highlightCurrentDay"), enabled);
+    emit calendarPreferencesChanged();
 }
 
 bool DiaryStore::saveCurrentDay()
