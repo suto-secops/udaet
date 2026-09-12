@@ -376,15 +376,19 @@ Kirigami.ApplicationWindow {
                             highlighted: visible && calendar.isFilled(dayNumber)
                             background: Rectangle {
                                 id: dayBackground
+                                clip: true
                                 radius: Kirigami.Units.smallSpacing
+                                border.width: 1
+                                border.color: dayButton.palette.midlight
                                 color: diaryStore.highlightCurrentDay && calendar.isCurrentDay(dayNumber)
-                                    ? Kirigami.Theme.highlightColor : "transparent"
+                                    ? Kirigami.Theme.highlightColor
+                                    : dayButton.highlighted ? Kirigami.Theme.highlightColor : "transparent"
 
                                 Rectangle {
                                     visible: diaryStore.crossOutPastDays && calendar.isPastDay(dayNumber)
                                     width: 2
-                                    height: Math.sqrt(parent.width * parent.width
-                                        + parent.height * parent.height)
+                                    height: Math.sqrt(Math.pow(parent.width - 8, 2)
+                                        + Math.pow(parent.height - 8, 2))
                                     anchors.centerIn: parent
                                     rotation: 45
                                     color: Kirigami.Theme.highlightColor
@@ -394,8 +398,8 @@ Kirigami.ApplicationWindow {
                                 Rectangle {
                                     visible: diaryStore.crossOutPastDays && calendar.isPastDay(dayNumber)
                                     width: 2
-                                    height: Math.sqrt(parent.width * parent.width
-                                        + parent.height * parent.height)
+                                    height: Math.sqrt(Math.pow(parent.width - 8, 2)
+                                        + Math.pow(parent.height - 8, 2))
                                     anchors.centerIn: parent
                                     rotation: -45
                                     color: Kirigami.Theme.highlightColor
