@@ -390,7 +390,8 @@ Kirigami.ApplicationWindow {
                                     height: Math.sqrt(Math.pow(parent.width - 8, 2)
                                         + Math.pow(parent.height - 8, 2))
                                     anchors.centerIn: parent
-                                    rotation: 45
+                                    rotation: Math.atan2(parent.width - 8, parent.height - 8)
+                                        * 180 / Math.PI
                                     color: Kirigami.Theme.highlightColor
                                     opacity: 0.55
                                 }
@@ -401,7 +402,8 @@ Kirigami.ApplicationWindow {
                                     height: Math.sqrt(Math.pow(parent.width - 8, 2)
                                         + Math.pow(parent.height - 8, 2))
                                     anchors.centerIn: parent
-                                    rotation: -45
+                                    rotation: -Math.atan2(parent.width - 8, parent.height - 8)
+                                        * 180 / Math.PI
                                     color: Kirigami.Theme.highlightColor
                                     opacity: 0.55
                                 }
