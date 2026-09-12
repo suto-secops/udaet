@@ -11,29 +11,30 @@ Kirigami.ApplicationWindow {
     visible: true
 
     function showDiary(date) {
-        pageStack.pop(null)
         if (date.length > 0) {
             diaryStore.loadDay(date)
         } else {
             diaryStore.loadToday()
         }
+        pageStack.replace(diaryPage)
+        navigationDrawer.close()
     }
 
     function showCalendar() {
-        pageStack.push(calendarPage)
-        calendarPage.refresh()
+        pageStack.replace(calendarPage)
+        navigationDrawer.close()
     }
 
     globalDrawer: Kirigami.GlobalDrawer {
         id: navigationDrawer
         title: qsTr("Udaet")
-        titleIcon: "journal"
+        titleIcon: "book"
         modal: false
 
         actions: [
             Kirigami.Action {
                 text: qsTr("Diary")
-                icon.name: "journal"
+                icon.name: "book"
                 onTriggered: root.showDiary("")
             },
             Kirigami.Action {
