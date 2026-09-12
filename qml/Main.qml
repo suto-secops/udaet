@@ -17,24 +17,22 @@ Kirigami.ApplicationWindow {
             diaryStore.loadToday()
         }
         pageStack.replace(diaryPage)
-        navigationDrawer.close()
     }
 
     function showCalendar() {
         pageStack.replace(calendarPage)
-        navigationDrawer.close()
     }
 
     globalDrawer: Kirigami.GlobalDrawer {
         id: navigationDrawer
         title: qsTr("Udaet")
-        titleIcon: "book"
+        titleIcon: "accessories-text-editor"
         modal: false
 
         actions: [
             Kirigami.Action {
                 text: qsTr("Diary")
-                icon.name: "book"
+                icon.name: "accessories-text-editor"
                 onTriggered: root.showDiary("")
             },
             Kirigami.Action {
@@ -64,8 +62,14 @@ Kirigami.ApplicationWindow {
             title: qsTr("Diary: %1").arg(diaryStore.currentDate)
             actions: Kirigami.Action {
                 text: qsTr("Navigation")
-                icon.name: "sidebar-expand"
-                onTriggered: navigationDrawer.open()
+                icon.name: navigationDrawer.opened ? "sidebar-collapse" : "sidebar-expand"
+                onTriggered: {
+                    if (navigationDrawer.opened) {
+                        navigationDrawer.close()
+                    } else {
+                        navigationDrawer.open()
+                    }
+                }
             }
 
             Column {
@@ -234,8 +238,14 @@ Kirigami.ApplicationWindow {
             title: qsTr("Calendar")
             actions: Kirigami.Action {
                 text: qsTr("Navigation")
-                icon.name: "sidebar-expand"
-                onTriggered: navigationDrawer.open()
+                icon.name: navigationDrawer.opened ? "sidebar-collapse" : "sidebar-expand"
+                onTriggered: {
+                    if (navigationDrawer.opened) {
+                        navigationDrawer.close()
+                    } else {
+                        navigationDrawer.open()
+                    }
+                }
             }
 
             function refresh() {
