@@ -390,21 +390,43 @@ Kirigami.ApplicationWindow {
                     opacity: 0.8
                 }
 
-                Controls.ComboBox {
-                    id: dateOrderCombo
-                    width: Math.min(parent.width, Kirigami.Units.gridUnit * 18)
-                    model: [qsTr("Day Month Year"), qsTr("Month Day Year"), qsTr("Year Month Day")]
-                    currentIndex: diaryStore.dateOrder === "dd MM yyyy"
-                        ? 0 : diaryStore.dateOrder === "MM dd yyyy" ? 1 : 2
-                    onActivated: diaryStore.dateOrder = ["dd MM yyyy", "MM dd yyyy", "yyyy MM dd"][currentIndex]
+                Row {
+                    width: parent.width
+                    spacing: Kirigami.Units.smallSpacing
+
+                    Controls.Label {
+                        width: Kirigami.Units.gridUnit * 6
+                        text: qsTr("Format:")
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    Controls.ComboBox {
+                        id: dateOrderCombo
+                        width: Kirigami.Units.gridUnit * 18
+                        model: ["dd mm yyyy", "mm dd yyyy", "yyyy mm dd"]
+                        currentIndex: diaryStore.dateOrder === "dd MM yyyy"
+                            ? 0 : diaryStore.dateOrder === "MM dd yyyy" ? 1 : 2
+                        onActivated: diaryStore.dateOrder = ["dd MM yyyy", "MM dd yyyy", "yyyy MM dd"][currentIndex]
+                    }
                 }
 
-                Controls.ComboBox {
-                    id: dateSeparatorCombo
-                    width: Math.min(parent.width, Kirigami.Units.gridUnit * 18)
-                    model: [qsTr("Hyphen (-)"), qsTr("Slash (/)")]
-                    currentIndex: diaryStore.dateSeparator === "/" ? 1 : 0
-                    onActivated: diaryStore.dateSeparator = currentIndex === 1 ? "/" : "-"
+                Row {
+                    width: parent.width
+                    spacing: Kirigami.Units.smallSpacing
+
+                    Controls.Label {
+                        width: Kirigami.Units.gridUnit * 6
+                        text: qsTr("Separator:")
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    Controls.ComboBox {
+                        id: dateSeparatorCombo
+                        width: Kirigami.Units.gridUnit * 18
+                        model: ["-", "/"]
+                        currentIndex: diaryStore.dateSeparator === "/" ? 1 : 0
+                        onActivated: diaryStore.dateSeparator = currentIndex === 1 ? "/" : "-"
+                    }
                 }
 
                 Controls.Label {
