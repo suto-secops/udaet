@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls as Controls
+import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 
 Kirigami.ApplicationWindow {
@@ -28,6 +29,10 @@ Kirigami.ApplicationWindow {
         title: ""
         titleIcon: null
         modal: false
+        interactiveResizeEnabled: true
+        minimumSize: Kirigami.Units.gridUnit * 12
+        preferredSize: Kirigami.Units.gridUnit * 18
+        maximumSize: Kirigami.Units.gridUnit * 28
 
         topContent: [
             Column {
@@ -43,10 +48,25 @@ Kirigami.ApplicationWindow {
 
                     Controls.Button {
                         anchors.fill: parent
-                        text: qsTr("Close sidebar")
-                        icon.name: "sidebar-collapse"
                         flat: true
                         onClicked: navigationDrawer.close()
+
+                        contentItem: RowLayout {
+                            spacing: Kirigami.Units.smallSpacing
+
+                            Kirigami.Icon {
+                                source: "sidebar-collapse"
+                                Layout.preferredWidth: Kirigami.Units.iconSizes.small
+                                Layout.preferredHeight: Kirigami.Units.iconSizes.small
+                            }
+
+                            Controls.Label {
+                                text: qsTr("Close sidebar")
+                                Layout.fillWidth: true
+                                elide: Text.ElideNone
+                                horizontalAlignment: Text.AlignLeft
+                            }
+                        }
                     }
                 }
 
@@ -101,17 +121,6 @@ Kirigami.ApplicationWindow {
 
         Kirigami.ScrollablePage {
             title: qsTr("Diary: %1").arg(diaryStore.currentDate)
-            actions: Kirigami.Action {
-                text: qsTr("Navigation")
-                icon.name: navigationDrawer.opened ? "sidebar-collapse" : "sidebar-expand"
-                onTriggered: {
-                    if (navigationDrawer.opened) {
-                        navigationDrawer.close()
-                    } else {
-                        navigationDrawer.open()
-                    }
-                }
-            }
 
             Column {
                 width: parent.width
@@ -277,17 +286,6 @@ Kirigami.ApplicationWindow {
             property int shownMonth: new Date().getMonth() + 1
             property var filledDays: []
             title: qsTr("Calendar")
-            actions: Kirigami.Action {
-                text: qsTr("Navigation")
-                icon.name: navigationDrawer.opened ? "sidebar-collapse" : "sidebar-expand"
-                onTriggered: {
-                    if (navigationDrawer.opened) {
-                        navigationDrawer.close()
-                    } else {
-                        navigationDrawer.open()
-                    }
-                }
-            }
 
             function refresh() {
                 filledDays = diaryStore.daysWithContent(shownYear, shownMonth)
