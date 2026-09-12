@@ -2,20 +2,43 @@ name: Build
 
 on:
   push:
+    paths:
+      - 'CMakeLists.txt'
+      - 'qml/**'
+      - 'src/**'
+      - '.github/workflows/build.yml'
   pull_request:
+    paths:
+      - 'CMakeLists.txt'
+      - 'qml/**'
+      - 'src/**'
+      - '.github/workflows/build.yml'
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare Arch package cache
+        run: mkdir -p "$GITHUB_WORKSPACE/.github/pacman-cache"
+      - name: Cache Arch packages
+        uses: actions/cache@v4
+        with:
+          path: .github/pacman-cache
+          key: arch-pacman-${{ runner.os }}-v1
       - name: Build in Arch Linux
         run: |
           docker run --rm \
             --volume "$GITHUB_WORKSPACE:/src" \
+            --volume "$GITHUB_WORKSPACE/.github/pacman-cache:/var/cache/pacman/pkg" \
             --workdir /src \
             archlinux:latest \
             bash -euxo pipefail -c '
+              sed -i "s/^#ParallelDownloads = 5/ParallelDownloads = 5/" /etc/pacman.conf
               pacman -Sy --noconfirm \
                 base-devel cmake extra-cmake-modules \
                 qt6-base qt6-declarative kirigami sqlite
