@@ -25,9 +25,43 @@ Kirigami.ApplicationWindow {
 
     globalDrawer: Kirigami.GlobalDrawer {
         id: navigationDrawer
-        title: qsTr("Udaet")
-        titleIcon: "journal-new"
+        title: ""
+        titleIcon: null
         modal: false
+
+        topContent: [
+            Column {
+                width: navigationDrawer.width
+                spacing: Kirigami.Units.smallSpacing
+
+                Rectangle {
+                    width: parent.width
+                    height: Kirigami.Units.gridUnit * 2
+                    color: "transparent"
+                    border.color: Kirigami.Theme.separatorColor
+                    radius: Kirigami.Units.smallSpacing
+
+                    Controls.Button {
+                        anchors.fill: parent
+                        text: qsTr("Close sidebar")
+                        icon.name: "sidebar-collapse"
+                        flat: true
+                        onClicked: navigationDrawer.close()
+                    }
+                }
+
+                Kirigami.Separator {
+                    width: parent.width
+                }
+
+                Controls.Label {
+                    leftPadding: Kirigami.Units.smallSpacing
+                    text: qsTr("Navigation")
+                    font.bold: true
+                    opacity: 0.8
+                }
+            }
+        ]
 
         actions: [
             Kirigami.Action {
@@ -46,9 +80,16 @@ Kirigami.ApplicationWindow {
                 enabled: false
             },
             Kirigami.Action {
-                text: qsTr("Close navigation")
-                icon.name: "sidebar-collapse"
-                onTriggered: navigationDrawer.close()
+                separator: true
+            },
+            Kirigami.Action {
+                text: qsTr("Other")
+                enabled: false
+            },
+            Kirigami.Action {
+                text: qsTr("Settings")
+                icon.name: "settings"
+                enabled: false
             }
         ]
     }
