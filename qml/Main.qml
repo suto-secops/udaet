@@ -206,7 +206,7 @@ Kirigami.ApplicationWindow {
                             height: entryEditor.implicitHeight
                             color: "transparent"
                             border.width: 1
-                            border.color: Kirigami.Theme.separatorColor
+                            border.color: entryEditor.palette.mid
                             radius: Kirigami.Units.smallSpacing
 
                             Controls.ScrollView {
