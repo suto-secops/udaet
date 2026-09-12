@@ -6,13 +6,13 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-find_package(ECM 6.0 REQUIRED NO_MODULE)
+find_package(ECM REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick Sql)
 find_package(KF6Kirigami REQUIRED)
 
-qt_standard_project_setup(REQUIRES 6.8)
+qt_standard_project_setup(REQUIRES 6.6)
 
 qt_add_executable(udaet
     src/main.cpp
