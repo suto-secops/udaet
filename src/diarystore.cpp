@@ -6,6 +6,7 @@
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QSettings>
 #include <QStringList>
 #include <QVariant>
 
@@ -18,6 +19,9 @@ DiaryStore::DiaryStore(QObject *parent)
     : QObject(parent)
     , m_connectionName(QStringLiteral("udaet-primary"))
 {
+    QSettings settings;
+    m_dateOrder = settings.value(QStringLiteral("dateOrder"), m_dateOrder).toString();
+    m_dateSeparator = settings.value(QStringLiteral("dateSeparator"), m_dateSeparator).toString();
     m_currentDate = QDate::currentDate().toString(Qt::ISODate);
     if (openDatabase() && migrate()) {
         loadToday();
@@ -26,7 +30,17 @@ DiaryStore::DiaryStore(QObject *parent)
 
 QString DiaryStore::currentDate() const
 {
-    return m_currentDate;
+    return formatDate(m_currentDate);
+}
+
+QString DiaryStore::dateOrder() const
+{
+    return m_dateOrder;
+}
+
+QString DiaryStore::dateSeparator() const
+{
+    return m_dateSeparator;
 }
 
 QString DiaryStore::entryText() const
@@ -121,6 +135,36 @@ void DiaryStore::setRating(double rating)
     emit ratedChanged();
 }
 
+void DiaryStore::setDateOrder(const QString &order)
+{
+    if (order != QStringLiteral("dd MM yyyy")
+        && order != QStringLiteral("MM dd yyyy")
+        && order != QStringLiteral("yyyy MM dd")) {
+        return;
+    }
+    if (m_dateOrder == order) {
+        return;
+    }
+    m_dateOrder = order;
+    QSettings().setValue(QStringLiteral("dateOrder"), m_dateOrder);
+    emit dateFormatChanged();
+    emit currentDateChanged();
+}
+
+void DiaryStore::setDateSeparator(const QString &separator)
+{
+    if (separator != QStringLiteral("-") && separator != QStringLiteral("/")) {
+        return;
+    }
+    if (m_dateSeparator == separator) {
+        return;
+    }
+    m_dateSeparator = separator;
+    QSettings().setValue(QStringLiteral("dateSeparator"), m_dateSeparator);
+    emit dateFormatChanged();
+    emit currentDateChanged();
+}
+
 bool DiaryStore::saveCurrentDay()
 {
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
@@ -148,17 +192,18 @@ bool DiaryStore::saveCurrentDay()
 
 bool DiaryStore::loadDay(const QString &date)
 {
-    const QDate parsedDate = QDate::fromString(date, Qt::ISODate);
+    const QDate parsedDate = parseDate(date);
     if (!parsedDate.isValid()) {
         return setError(QStringLiteral("The selected date is invalid."));
     }
+    const QString normalizedDate = parsedDate.toString(Qt::ISODate);
 
     QSqlDatabase database = QSqlDatabase::database(m_connectionName);
     QSqlQuery query(database);
     query.prepare(QStringLiteral(
         "SELECT d.rating, e.markdown FROM days d "
         "LEFT JOIN entries e ON e.day = d.day WHERE d.day = :day"));
-    query.bindValue(QStringLiteral(":day"), date);
+    query.bindValue(QStringLiteral(":day"), normalizedDate);
     if (!query.exec()) {
         return setError(query.lastError().text());
     }
@@ -167,7 +212,7 @@ bool DiaryStore::loadDay(const QString &date)
     const QString oldText = m_entryText;
     const double oldRating = m_rating;
     const bool oldRated = m_rated;
-    m_currentDate = date;
+    m_currentDate = normalizedDate;
     m_entryText.clear();
     m_rating = 0.0;
     m_rated = false;
@@ -193,6 +238,29 @@ bool DiaryStore::loadDay(const QString &date)
     }
     clearError();
     return true;
+}
+
+QString DiaryStore::formatDate(const QString &isoDate) const
+{
+    const QDate date = QDate::fromString(isoDate, Qt::ISODate);
+    if (!date.isValid()) {
+        return isoDate;
+    }
+    QString formatted = m_dateOrder;
+    formatted.replace(QStringLiteral(" "), m_dateSeparator);
+    return date.toString(formatted);
+}
+
+QDate DiaryStore::parseDate(const QString &date) const
+{
+    const QString trimmed = date.trimmed();
+    const QDate isoDate = QDate::fromString(trimmed, Qt::ISODate);
+    if (isoDate.isValid()) {
+        return isoDate;
+    }
+    QString pattern = m_dateOrder;
+    pattern.replace(QStringLiteral(" "), m_dateSeparator);
+    return QDate::fromString(trimmed, pattern);
 }
 
 void DiaryStore::loadToday()

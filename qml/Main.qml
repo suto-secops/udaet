@@ -24,6 +24,10 @@ Kirigami.ApplicationWindow {
         pageStack.replace(calendarPage)
     }
 
+    function showSettings() {
+        pageStack.replace(settingsPage)
+    }
+
     globalDrawer: Kirigami.GlobalDrawer {
         id: navigationDrawer
         title: ""
@@ -33,7 +37,7 @@ Kirigami.ApplicationWindow {
 
         topContent: [
             Column {
-                width: navigationDrawer.width
+                width: parent.width
                 spacing: Kirigami.Units.smallSpacing
 
                 Rectangle {
@@ -105,8 +109,8 @@ Kirigami.ApplicationWindow {
             },
             Kirigami.Action {
                 text: qsTr("Settings")
-                icon.name: "settings"
-                enabled: false
+                icon.name: "configure"
+                onTriggered: root.showSettings()
             }
         ]
     }
@@ -145,11 +149,6 @@ Kirigami.ApplicationWindow {
                         text: qsTr("Load date")
                         onClicked: diaryStore.loadDay(dateField.text)
                     }
-                }
-
-                Controls.Label {
-                    text: qsTr("Markdown source")
-                    opacity: 0.8
                 }
 
                 Row {
@@ -202,19 +201,27 @@ Kirigami.ApplicationWindow {
                             font.bold: true
                         }
 
-                        Controls.ScrollView {
-                            id: previewScroll
+                        Rectangle {
                             width: parent.width
                             height: entryEditor.implicitHeight
-                            contentWidth: availableWidth
+                            color: "transparent"
+                            border.color: Kirigami.Theme.separatorColor
+                            radius: Kirigami.Units.smallSpacing
 
-                            Controls.Label {
-                                width: previewScroll.availableWidth
-                                text: diaryStore.entryText.length > 0
-                                    ? diaryStore.entryText
-                                    : qsTr("Rendered preview will appear here.")
-                                textFormat: Text.MarkdownText
-                                wrapMode: Controls.Label.Wrap
+                            Controls.ScrollView {
+                                id: previewScroll
+                                anchors.fill: parent
+                                anchors.margins: Kirigami.Units.smallSpacing
+                                contentWidth: availableWidth
+
+                                Controls.Label {
+                                    width: previewScroll.availableWidth
+                                    text: diaryStore.entryText.length > 0
+                                        ? diaryStore.entryText
+                                        : qsTr("Rendered preview will appear here.")
+                                    textFormat: Text.MarkdownText
+                                    wrapMode: Controls.Label.Wrap
+                                }
                             }
                         }
                     }
@@ -355,6 +362,51 @@ Kirigami.ApplicationWindow {
                             onClicked: root.showDiary("%1-%2-%3".arg(calendar.shownYear)
                                 .arg(("0" + calendar.shownMonth).slice(-2))
                                 .arg(("0" + dayNumber).slice(-2)))
+                        }
+                    }
+
+                    Component {
+                        id: settingsPage
+
+                        Kirigami.ScrollablePage {
+                            title: qsTr("Settings")
+
+                            Column {
+                                width: parent.width
+                                spacing: Kirigami.Units.largeSpacing
+
+                                Kirigami.Heading {
+                                    text: qsTr("Date format")
+                                    level: 2
+                                }
+
+                                Controls.Label {
+                                    text: qsTr("Choose how dates are shown and entered.")
+                                    opacity: 0.8
+                                }
+
+                                Controls.ComboBox {
+                                    id: dateOrderCombo
+                                    width: Math.min(parent.width, Kirigami.Units.gridUnit * 18)
+                                    model: [qsTr("Day Month Year"), qsTr("Month Day Year"), qsTr("Year Month Day")]
+                                    currentIndex: diaryStore.dateOrder === "dd MM yyyy"
+                                        ? 0 : diaryStore.dateOrder === "MM dd yyyy" ? 1 : 2
+                                    onActivated: diaryStore.dateOrder = ["dd MM yyyy", "MM dd yyyy", "yyyy MM dd"][currentIndex]
+                                }
+
+                                Controls.ComboBox {
+                                    id: dateSeparatorCombo
+                                    width: Math.min(parent.width, Kirigami.Units.gridUnit * 18)
+                                    model: [qsTr("Hyphen (-)"), qsTr("Slash (/)")]
+                                    currentIndex: diaryStore.dateSeparator === "/" ? 1 : 0
+                                    onActivated: diaryStore.dateSeparator = currentIndex === 1 ? "/" : "-"
+                                }
+
+                                Controls.Label {
+                                    text: qsTr("Example: %1").arg(diaryStore.currentDate)
+                                    opacity: 0.8
+                                }
+                            }
                         }
                     }
                 }

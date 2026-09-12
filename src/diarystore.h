@@ -1,5 +1,6 @@
 #pragma once
 
+#include <QDate>
 #include <QObject>
 #include <QString>
 #include <QVariantList>
@@ -15,6 +16,8 @@ class DiaryStore final : public QObject
     Q_PROPERTY(QString ratingText READ ratingText NOTIFY ratingChanged)
     Q_PROPERTY(bool rated READ rated NOTIFY ratedChanged)
     Q_PROPERTY(QString errorMessage READ errorMessage NOTIFY errorMessageChanged)
+    Q_PROPERTY(QString dateOrder READ dateOrder WRITE setDateOrder NOTIFY dateFormatChanged)
+    Q_PROPERTY(QString dateSeparator READ dateSeparator WRITE setDateSeparator NOTIFY dateFormatChanged)
 
 public:
     explicit DiaryStore(QObject *parent = nullptr);
@@ -27,9 +30,13 @@ public:
     QString ratingText() const;
     bool rated() const;
     QString errorMessage() const;
+    QString dateOrder() const;
+    QString dateSeparator() const;
 
     void setEntryText(const QString &text);
     void setRating(double rating);
+    void setDateOrder(const QString &order);
+    void setDateSeparator(const QString &separator);
 
     Q_INVOKABLE bool saveCurrentDay();
     Q_INVOKABLE bool loadDay(const QString &date);
@@ -44,6 +51,7 @@ signals:
     void ratingChanged();
     void ratedChanged();
     void errorMessageChanged();
+    void dateFormatChanged();
 
 private:
     bool openDatabase();
@@ -57,4 +65,9 @@ private:
     bool m_rated = false;
     QString m_errorMessage;
     QString m_connectionName;
+    QString m_dateOrder = QStringLiteral("yyyy MM dd");
+    QString m_dateSeparator = QStringLiteral("-");
+
+    QString formatDate(const QString &isoDate) const;
+    QDate parseDate(const QString &date) const;
 };
