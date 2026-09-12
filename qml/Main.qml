@@ -26,13 +26,13 @@ Kirigami.ApplicationWindow {
     globalDrawer: Kirigami.GlobalDrawer {
         id: navigationDrawer
         title: qsTr("Udaet")
-        titleIcon: "accessories-text-editor"
+        titleIcon: "journal-new"
         modal: false
 
         actions: [
             Kirigami.Action {
                 text: qsTr("Diary")
-                icon.name: "accessories-text-editor"
+                icon.name: "journal-new"
                 onTriggered: root.showDiary("")
             },
             Kirigami.Action {
