@@ -375,18 +375,38 @@ Kirigami.ApplicationWindow {
                             text: visible ? dayNumber : ""
                             highlighted: visible && calendar.isFilled(dayNumber)
                             background: Rectangle {
+                                id: dayBackground
                                 radius: Kirigami.Units.smallSpacing
                                 color: diaryStore.highlightCurrentDay && calendar.isCurrentDay(dayNumber)
                                     ? Kirigami.Theme.highlightColor : "transparent"
+
+                                Rectangle {
+                                    visible: diaryStore.crossOutPastDays && calendar.isPastDay(dayNumber)
+                                    width: 2
+                                    height: Math.sqrt(parent.width * parent.width
+                                        + parent.height * parent.height)
+                                    anchors.centerIn: parent
+                                    rotation: 45
+                                    color: Kirigami.Theme.highlightColor
+                                    opacity: 0.55
+                                }
+
+                                Rectangle {
+                                    visible: diaryStore.crossOutPastDays && calendar.isPastDay(dayNumber)
+                                    width: 2
+                                    height: Math.sqrt(parent.width * parent.width
+                                        + parent.height * parent.height)
+                                    anchors.centerIn: parent
+                                    rotation: -45
+                                    color: Kirigami.Theme.highlightColor
+                                    opacity: 0.55
+                                }
                             }
                             contentItem: Controls.Label {
                                 text: dayButton.text
                                 color: dayButton.highlighted
                                     ? Kirigami.Theme.highlightedTextColor
                                     : Kirigami.Theme.textColor
-                                opacity: diaryStore.crossOutPastDays && calendar.isPastDay(dayNumber)
-                                    ? 0.65 : 1
-                                font.strikeout: diaryStore.crossOutPastDays && calendar.isPastDay(dayNumber)
                             }
                             onClicked: root.showDiary("%1-%2-%3".arg(calendar.shownYear)
                                 .arg(("0" + calendar.shownMonth).slice(-2))
