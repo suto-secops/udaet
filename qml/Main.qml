@@ -41,7 +41,7 @@ Kirigami.ApplicationWindow {
                 spacing: Kirigami.Units.smallSpacing
 
                 Rectangle {
-                    Layout.fillWidth: true
+                    width: parent.width
                     height: Kirigami.Units.gridUnit * 2
                     color: "transparent"
                     border.color: Kirigami.Theme.separatorColor
