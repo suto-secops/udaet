@@ -365,50 +365,51 @@ Kirigami.ApplicationWindow {
                         }
                     }
 
-                    Component {
-                        id: settingsPage
+                }
+            }
+        }
+    }
 
-                        Kirigami.ScrollablePage {
-                            title: qsTr("Settings")
+    Component {
+        id: settingsPage
 
-                            Column {
-                                width: parent.width
-                                spacing: Kirigami.Units.largeSpacing
+        Kirigami.ScrollablePage {
+            title: qsTr("Settings")
 
-                                Kirigami.Heading {
-                                    text: qsTr("Date format")
-                                    level: 2
-                                }
+            Column {
+                width: parent.width
+                spacing: Kirigami.Units.largeSpacing
 
-                                Controls.Label {
-                                    text: qsTr("Choose how dates are shown and entered.")
-                                    opacity: 0.8
-                                }
+                Kirigami.Heading {
+                    text: qsTr("Date format")
+                    level: 2
+                }
 
-                                Controls.ComboBox {
-                                    id: dateOrderCombo
-                                    width: Math.min(parent.width, Kirigami.Units.gridUnit * 18)
-                                    model: [qsTr("Day Month Year"), qsTr("Month Day Year"), qsTr("Year Month Day")]
-                                    currentIndex: diaryStore.dateOrder === "dd MM yyyy"
-                                        ? 0 : diaryStore.dateOrder === "MM dd yyyy" ? 1 : 2
-                                    onActivated: diaryStore.dateOrder = ["dd MM yyyy", "MM dd yyyy", "yyyy MM dd"][currentIndex]
-                                }
+                Controls.Label {
+                    text: qsTr("Choose how dates are shown and entered.")
+                    opacity: 0.8
+                }
 
-                                Controls.ComboBox {
-                                    id: dateSeparatorCombo
-                                    width: Math.min(parent.width, Kirigami.Units.gridUnit * 18)
-                                    model: [qsTr("Hyphen (-)"), qsTr("Slash (/)")]
-                                    currentIndex: diaryStore.dateSeparator === "/" ? 1 : 0
-                                    onActivated: diaryStore.dateSeparator = currentIndex === 1 ? "/" : "-"
-                                }
+                Controls.ComboBox {
+                    id: dateOrderCombo
+                    width: Math.min(parent.width, Kirigami.Units.gridUnit * 18)
+                    model: [qsTr("Day Month Year"), qsTr("Month Day Year"), qsTr("Year Month Day")]
+                    currentIndex: diaryStore.dateOrder === "dd MM yyyy"
+                        ? 0 : diaryStore.dateOrder === "MM dd yyyy" ? 1 : 2
+                    onActivated: diaryStore.dateOrder = ["dd MM yyyy", "MM dd yyyy", "yyyy MM dd"][currentIndex]
+                }
 
-                                Controls.Label {
-                                    text: qsTr("Example: %1").arg(diaryStore.currentDate)
-                                    opacity: 0.8
-                                }
-                            }
-                        }
-                    }
+                Controls.ComboBox {
+                    id: dateSeparatorCombo
+                    width: Math.min(parent.width, Kirigami.Units.gridUnit * 18)
+                    model: [qsTr("Hyphen (-)"), qsTr("Slash (/)")]
+                    currentIndex: diaryStore.dateSeparator === "/" ? 1 : 0
+                    onActivated: diaryStore.dateSeparator = currentIndex === 1 ? "/" : "-"
+                }
+
+                Controls.Label {
+                    text: qsTr("Example: %1").arg(diaryStore.currentDate)
+                    opacity: 0.8
                 }
             }
         }
